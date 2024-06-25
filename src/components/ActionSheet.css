@@ -1,0 +1,54 @@
+.action-sheet {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 1;
+    transition: background-color 300ms ease-out;
+    pointer-events: none;
+}
+
+.action-sheet__dialog {
+    background-color: #FFF;
+    padding: 16px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    position: absolute;
+    bottom: 0;
+    transform: translateY(100%);
+}
+
+.action-sheet__header {
+    height: 24px;
+}
+
+.action-sheet--show,
+.action-sheet--slide-up,
+.action-sheet--slide-down {
+    pointer-events: all;
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.action-sheet--show .action-sheet__dialog {
+    transform: translateY(0);
+}
+
+.action-sheet--slide-up .action-sheet__dialog {
+    animation: slideUp 300ms ease-out forwards;
+}
+
+.action-sheet--slide-down .action-sheet__dialog {
+    animation: slideUp 300ms ease-out reverse backwards;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
