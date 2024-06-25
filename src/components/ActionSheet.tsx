@@ -6,7 +6,7 @@ interface ActionSheetProps extends React.HTMLProps<HTMLElement> {
 }
 export function ActionSheet (props: ActionSheetProps) {
     const { children, show } = props;
-    const [showInternal, setShowInternal] = useState(false);
+    const [showDialog, setShowDialog] = useState(false);
     const [className, setClassName] = useState("action-sheet");
 
     const el = useRef<HTMLDivElement>(null);
@@ -14,23 +14,23 @@ export function ActionSheet (props: ActionSheetProps) {
     useEffect(() => {
         if (show) {
             // Show action sheet and render dialog contents
-            setShowInternal(true);
+            setShowDialog(true);
         } else {
-            if (el.current && showInternal) {
+            if (el.current && showDialog) {
                 // Slide down dialog
                 el.current.addEventListener("animationend", () => {
                     // Hide action sheet and stop rendering dialog contents
                     setClassName("action-sheet")
-                    setShowInternal(false);
+                    setShowDialog(false);
                 }, { once: true });
 
                 setClassName("action-sheet action-sheet--slide-down");
             }
         }
-    }, [show, showInternal])
+    }, [show, showDialog])
 
     useEffect(() => {
-        if (showInternal) {
+        if (showDialog) {
             // Slide up dialog
             if (el.current) {
                 el.current.addEventListener("animationend", () => {
@@ -40,11 +40,11 @@ export function ActionSheet (props: ActionSheetProps) {
                 setClassName("action-sheet action-sheet--slide-up");
             }
         }
-    }, [showInternal])
+    }, [showDialog])
 
     return (
         <div ref={el} className={className}>
-            {showInternal &&
+            {showDialog &&
                 <div className="action-sheet__dialog">
                     <div className="action-sheet__header"></div>
                     <div className="action-sheet__body">{children}</div>
