@@ -31,7 +31,6 @@ export function ActionSheet (props: ActionSheetProps) {
         const diff = ev.changedTouches[0].clientY - cursorPosY.current;
 
         if (diff > 0) {
-            console.log('touchmove');
             rootEl.current?.setAttribute("style", `--posY: ${diff}px; --speed: ${deltaTime.current}ms`);
         }
     }
@@ -58,8 +57,6 @@ export function ActionSheet (props: ActionSheetProps) {
                         easing: "ease-out"
                     }
                 );
-
-                console.log('Speed:', speed);
 
                 animation.onfinish = () => {
                     console.log('touchend');
@@ -111,10 +108,9 @@ export function ActionSheet (props: ActionSheetProps) {
                 setClassName("action-sheet action-sheet--slide-up");
 
                 if (dialogHeaderEl.current) {
-                    console.log('Setup touch events');
-                    dialogHeaderEl.current.addEventListener("touchstart", onTouchStart, false);
-                    dialogHeaderEl.current.addEventListener("touchmove", onTouchMove, false);
-                    dialogHeaderEl.current.addEventListener("touchend", onTouchEnd, false);
+                    dialogHeaderEl.current.addEventListener("touchstart", onTouchStart);
+                    dialogHeaderEl.current.addEventListener("touchmove", onTouchMove);
+                    dialogHeaderEl.current.addEventListener("touchend", onTouchEnd);
                 }
             }
         }
