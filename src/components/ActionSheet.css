@@ -1,8 +1,10 @@
 .action-sheet {
+    --posY: 0;
+    --speed: 300ms;
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
+    height: 100dvh;
     width: 100%;
     background-color: rgba(0, 0, 0, 0);
     z-index: 1;
@@ -12,16 +14,28 @@
 
 .action-sheet__dialog {
     background-color: #FFF;
-    padding: 16px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     position: absolute;
     bottom: 0;
     transform: translateY(100%);
+    transition: top 300ms ease-out;
+}
+
+.action-sheet__header,
+.action-sheet__body,
+.action-sheet__footer {
+    padding-inline: 16px;
+}
+
+.action-sheet__header,
+.action-sheet__footer {
+    padding-block: 16px;
 }
 
 .action-sheet__header {
-    height: 24px;
+    height: 32px;
+    padding: 16px;
 }
 
 .action-sheet--show,
@@ -32,15 +46,19 @@
 }
 
 .action-sheet--show .action-sheet__dialog {
-    transform: translateY(0);
+    transform: translateY(var(--posY));
 }
 
 .action-sheet--slide-up .action-sheet__dialog {
-    animation: slideUp 300ms ease-out forwards;
+    animation: slideUp var(--speed) ease-out forwards;
 }
 
 .action-sheet--slide-down .action-sheet__dialog {
-    animation: slideUp 300ms ease-out reverse backwards;
+    animation: slideUp var(--speed) ease-out reverse backwards;
+}
+
+.action-sheet--dragging .action-sheet__dialog {
+    transform: translateY(var(--posY));
 }
 
 @keyframes slideUp {
@@ -49,6 +67,6 @@
     }
 
     to {
-        transform: translateY(0);
+        transform: translateY(var(--posY));
     }
 }
