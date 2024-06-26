@@ -65,7 +65,6 @@ export function ActionSheet (props: ActionSheetProps) {
                 );
 
                 animation.onfinish = () => {
-                    console.log('touchend');
                     rootEl.current?.setAttribute("style", `--posY: ${target}; --speed: ${speed}ms;`);
                     setClassName((state) => state.replace(" action-sheet--dragging", ""));
 
@@ -78,27 +77,31 @@ export function ActionSheet (props: ActionSheetProps) {
     }
 
     useEffect(() => {
+        // 1. Show action sheet and render dialog contents (off screen)
         if (show) {
-            // 1. Show action sheet and render dialog contents
             setShowDialog(true);
             rootEl.current?.removeAttribute("style")
+
+            // Prevent browser triggering browser pull to refresh when
+            // attempting to drag the action sheet dialog
             rootEl.current?.addEventListener("touchmove", stopPropagation);
         } else {
+            // 3. Slide down dialog
             if (rootEl.current && showDialog) {
-                // 3. Slide down dialog
+                // Callback after slide down animation
                 rootEl.current.addEventListener("animationend", () => {
-                    if (dialogHeaderEl.current) {
-                        dialogHeaderEl.current.removeEventListener("touchstart", onTouchStart);
-                        dialogHeaderEl.current.removeEventListener("touchmove", onTouchMove);
-                        dialogHeaderEl.current.removeEventListener("touchend", onTouchEnd);
-                    }
+                    // Clean up event listeners
+                    dialogHeaderEl.current?.removeEventListener("touchstart", onTouchStart);
+                    dialogHeaderEl.current?.removeEventListener("touchmove", onTouchMove);
+                    dialogHeaderEl.current?.removeEventListener("touchend", onTouchEnd);
+                    rootEl.current?.removeEventListener("touchmove", stopPropagation);
 
                     // 4. Hide action sheet and stop rendering dialog contents
                     setClassName("action-sheet")
                     setShowDialog(false);
-                    rootEl.current?.removeEventListener("touchmove", stopPropagation);
                 }, { once: true });
 
+                // Trigger slide down animation
                 setClassName("action-sheet action-sheet--slide-down");
             }
         }
@@ -106,21 +109,20 @@ export function ActionSheet (props: ActionSheetProps) {
     }, [show, showDialog])
 
     useEffect(() => {
-        if (showDialog) {
-            // 2. Slide up dialog
-            if (rootEl.current) {
-                rootEl.current.addEventListener("animationend", () => {
-                    setClassName("action-sheet action-sheet--show");
-                }, { once: true });
+        // 2. Slide up dialog
+        if (showDialog && rootEl.current) {
+            // Setup event listeners
+            dialogHeaderEl.current?.addEventListener("touchstart", onTouchStart);
+            dialogHeaderEl.current?.addEventListener("touchmove", onTouchMove);
+            dialogHeaderEl.current?.addEventListener("touchend", onTouchEnd);
 
-                setClassName("action-sheet action-sheet--slide-up");
+            // Callback after slide up animation
+            rootEl.current.addEventListener("animationend", () => {
+                setClassName("action-sheet action-sheet--show");
+            }, { once: true });
 
-                if (dialogHeaderEl.current) {
-                    dialogHeaderEl.current.addEventListener("touchstart", onTouchStart);
-                    dialogHeaderEl.current.addEventListener("touchmove", onTouchMove);
-                    dialogHeaderEl.current.addEventListener("touchend", onTouchEnd);
-                }
-            }
+            // Trigger slide up animation
+            setClassName("action-sheet action-sheet--slide-up");
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showDialog])
