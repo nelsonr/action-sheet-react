@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import "./ActionSheet.css"
 
+function stopPropagation (ev: TouchEvent) {
+    ev.preventDefault();
+    ev.stopPropagation();
+}
+
 interface ActionSheetProps extends React.HTMLProps<HTMLElement> {
     show: boolean;
     onSlideDown: () => unknown;
 }
+
 export function ActionSheet (props: ActionSheetProps) {
     const { children, show, onSlideDown } = props;
     const [showDialog, setShowDialog] = useState(false);
@@ -74,8 +80,9 @@ export function ActionSheet (props: ActionSheetProps) {
     useEffect(() => {
         if (show) {
             // 1. Show action sheet and render dialog contents
-            rootEl.current?.removeAttribute("style")
             setShowDialog(true);
+            rootEl.current?.removeAttribute("style")
+            rootEl.current?.addEventListener("touchmove", stopPropagation);
         } else {
             if (rootEl.current && showDialog) {
                 // 3. Slide down dialog
@@ -89,6 +96,7 @@ export function ActionSheet (props: ActionSheetProps) {
                     // 4. Hide action sheet and stop rendering dialog contents
                     setClassName("action-sheet")
                     setShowDialog(false);
+                    rootEl.current?.removeEventListener("touchmove", stopPropagation);
                 }, { once: true });
 
                 setClassName("action-sheet action-sheet--slide-down");
